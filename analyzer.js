@@ -7,12 +7,12 @@ const pickBy = require('lodash/pickBy')
 let defaults = {
     participants: null,
     averageAgreements: null,
-    averageScorePerAgreement: null,
+    averageScore: null,
     me: {
         "sessions": null,
         "agreements": null,
         "score": null,
-        averageScorePerAgreement: null,
+        averageScore: null,
         averageAgreements: null,
     }
 }
@@ -22,7 +22,7 @@ let dataSlice = 'all'
 const getAvgScore = (data) => {
     let itemLength = keys(data).length
     return reduce(data, (acc, item) => {
-        let val = acc + (item[dataSlice].score / item[dataSlice].agreements)
+        let val = acc + (item[dataSlice].score / item[dataSlice].sessions)
         return isNaN(val) ? acc : val;
     }, 0) / itemLength
 }
@@ -49,10 +49,10 @@ module.exports = (data, myId, date = null) => {
 
     output.participants = keys(data).length
     output.averageAgreements = getAvgAgreements(data)
-    output.averageScorePerAgreement = getAvgScore(data)
+    output.averageScore = getAvgScore(data)
     if (typeof myData[dataSlice] !== 'undefined') {
         output.me = Object.assign({}, output.me, myData[dataSlice])
-        output.me.averageScorePerAgreement = myData[dataSlice].score / myData[dataSlice].agreements
+        output.me.averageScore = myData[dataSlice].score / myData[dataSlice].sessions
         output.me.averageAgreements = myData[dataSlice].agreements / myData[dataSlice].sessions
     } else {
         delete output.me
